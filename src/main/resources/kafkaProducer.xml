@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd">
+
+		<!-- 定义producer的参数 -->
+	<bean id="producerProperties" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<!-- brokers集群 -->
+				<entry key="bootstrap.servers" value="localhost:7000" />
+				<!--  消费者群组ID，发布-订阅模式，即如果一个生产者，多个消费者都要消费，那么需要定义自己的群组，同一群组内的消费者只有一个能消费到消息 -->
+				<entry key="group.id" value="0" />
+				<!-- 发送失败重试次数 -->
+				<entry key="retries" value="1" />
+				<!-- 批处理条数：当多个记录被发送到同一个分区时，生产者会尝试将记录合并到更少的请求中。这有助于客户端和服务器的性能。 -->
+				<entry key="batch.size" value="16384" />
+				<!-- 批处理延迟时间上限：即1ms过后，不管是否达到批处理数，都直接发送一次请求 -->
+				<entry key="linger.ms" value="1" />
+				<!-- 即32MB的批处理缓冲区 -->
+				<entry key="buffer.memory" value="33554432" />
+				<!-- 源码预制的UTF8字符串反序列化实现类 -->
+				<entry key="key.serializer"
+					value="org.apache.kafka.common.serialization.StringSerializer" />
+				<entry key="value.serializer"
+					value="org.apache.kafka.common.serialization.StringSerializer" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!-- 创建kafkatemplate需要使用的producerfactory bean -->
+	<bean id="producerFactory"
+		class="org.springframework.kafka.core.DefaultKafkaProducerFactory">
+		<constructor-arg>
+			<ref bean="producerProperties" />
+		</constructor-arg>
+	</bean>
+
+	<!-- 创建kafkatemplate bean，使用的时候，只需要注入这个bean，即可使用template的send消息方法 -->
+	<bean id="KafkaTemplate" class="org.springframework.kafka.core.KafkaTemplate">
+		<constructor-arg ref="producerFactory" />
+		<constructor-arg name="autoFlush" value="true" />
+		<property name="defaultTopic" value="defaultTopic" />
+		<property name="producerListener" ref="producerListener"/>
+	</bean>
+	
+	<bean id="producerListener" class="com.ldf.kafka.listener.KafkaProducerListener" /> 
+</beans>
