@@ -1,15 +1,24 @@
+
 package com.ldf.test;
 
 import java.util.Map;
 
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import com.ldf.kafka.producer.KafkaProducerServer;
 
-
 public class KafkaProducerTest {
-	public static void main(String[] args) {
+
+	KafkaProducerServer kafkaProducer ;
+
+	@Test
+	public void testName() throws Exception {
 		
-		KafkaProducerServer kafkaProducer = new KafkaProducerServer();
-		String topic = "orderTopic";
+		AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+		kafkaProducer = applicationContext.getBean(KafkaProducerServer.class);
+		String topic = "test";
 		String value = "test";
 		String ifPartition = "0";
 		Integer partitionNum = 3;
@@ -24,4 +33,5 @@ public class KafkaProducerTest {
 		System.out.println("code:"+code);
 		System.out.println("message:"+message);
 	}
+
 }
