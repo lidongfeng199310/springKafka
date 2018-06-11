@@ -15,23 +15,28 @@ public class KafkaProducerTest {
 
 	@Test
 	public void testName() throws Exception {
-		
-		AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-		kafkaProducer = applicationContext.getBean(KafkaProducerServer.class);
-		String topic = "test";
-		String value = "test";
-		String ifPartition = "0";
-		Integer partitionNum = 3;
-		String role = "test";//用来生成key
-		Map<String,Object> res = kafkaProducer.sndMesForTemplate
-				(topic, value, ifPartition, partitionNum, role);
-		
-		System.out.println("测试结果如下：===============");
-		String message = (String)res.get("message");
-		String code = (String)res.get("code");
-		
-		System.out.println("code:"+code);
-		System.out.println("message:"+message);
+		try {
+
+			AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+			kafkaProducer = applicationContext.getBean(KafkaProducerServer.class);
+			String topic = "test";
+			String value = "李东峰sss";
+			String ifPartition = "1";
+			Integer partitionNum = 3;
+			String role = "test";//用来生成key
+			Map<String,Object> res = kafkaProducer.sndMesForTemplate
+					(topic, value, ifPartition, partitionNum, role);
+			
+			System.out.println("测试结果如下：===============");
+			String message = (String)res.get("message");
+			String code = (String)res.get("code");
+			
+			System.out.println("code:"+code);
+			System.out.println("message:"+message);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 }
